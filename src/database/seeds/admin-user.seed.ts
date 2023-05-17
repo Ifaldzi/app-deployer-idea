@@ -12,6 +12,7 @@ export default class AdminUserSeeder implements Seeder {
         username: 'admin',
         name: 'Top Level Admin',
         password: hashedPassword,
+        email: 'admin@test.com',
       },
     ]);
   }

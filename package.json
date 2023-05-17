@@ -25,6 +25,9 @@
     "seed:run": "npm run build && ts-node ./node_modules/typeorm-extension/dist/cli/index.js seed -d dist/database/typeorm.config.js"
   },
   "dependencies": {
+    "@automapper/classes": "^8.7.7",
+    "@automapper/core": "^8.7.7",
+    "@automapper/nestjs": "^8.7.7",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.3",

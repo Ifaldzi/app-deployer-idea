@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -12,9 +12,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Request() req): Promise<User[]> {
-    console.log(req.user);
-
+  async findAll(): Promise<User[]> {
     const users = await this.userService.findAll();
     return users;
   }

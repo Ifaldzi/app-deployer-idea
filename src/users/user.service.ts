@@ -14,4 +14,8 @@ export class UserService {
   findByUsername(username: string): Promise<User | null> {
     return this.userRepo.findOneBy({ username });
   }
+
+  async createNewUser(user: User): Promise<void> {
+    await this.userRepo.save(user);
+  }
 }

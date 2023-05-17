@@ -4,6 +4,7 @@ import config from 'src/config/config';
 import { UserModule } from 'src/users/user.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { AuthProfile } from './auth.profile';
 
 const { jwt } = config;
 
@@ -16,7 +17,7 @@ const { jwt } = config;
       signOptions: { expiresIn: jwt.accessTokenExpiresInMinute },
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, AuthProfile],
   controllers: [AuthController],
 })
 export class AuthModule {}
