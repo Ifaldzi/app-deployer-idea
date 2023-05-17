@@ -10,4 +10,8 @@ export default {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    accessTokenExpiresInMinute: `${process.env.ACCESS_TOKEN_EXPIRES}m`,
+  },
 };
