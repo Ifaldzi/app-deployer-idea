@@ -1,7 +1,16 @@
 import { Persistable } from 'src/common/entities/persistable.entity';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AutoMap } from '@automapper/classes';
+import { Application } from 'src/applications/application.entity';
+import { USER_APPLICATION_TABLE_NAME } from 'src/common/constants/entity.constant';
 
 @Entity()
 export class User {
@@ -26,6 +35,20 @@ export class User {
 
   @Column(() => Persistable, { prefix: false })
   persistable: Persistable;
+
+  @ManyToMany(() => Application, { onDelete: 'CASCADE' })
+  @JoinTable({
+    name: USER_APPLICATION_TABLE_NAME,
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'application_id',
+      referencedColumnName: 'id',
+    },
+  })
+  applications: Application[];
 
   @BeforeInsert()
   async generateHashedPassword(): Promise<void> {
