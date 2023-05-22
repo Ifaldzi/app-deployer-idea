@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/users/user.service';
 import { RegisterDto } from './dto/register.dto';
@@ -37,7 +33,7 @@ export class AuthService {
     try {
       await this.userService.createNewUser(newUser);
     } catch (error) {
-      throw new BadRequestException(error.detail);
+      throw error;
     }
   }
 }
