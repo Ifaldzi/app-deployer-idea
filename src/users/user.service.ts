@@ -18,4 +18,8 @@ export class UserService {
   async createNewUser(user: User): Promise<void> {
     await this.userRepo.save(user);
   }
+
+  getUserById(id: string): Promise<User> {
+    return this.userRepo.findOneBy({ id });
+  }
 }

@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AutoMap } from '@automapper/classes';
-import { Application } from 'src/applications/application.entity';
+import { Application } from 'src/applications/entities/application.entity';
 import { USER_APPLICATION_TABLE_NAME } from 'src/common/constants/entity.constant';
 
 @Entity()
@@ -36,7 +36,7 @@ export class User {
   @Column(() => Persistable, { prefix: false })
   persistable: Persistable;
 
-  @ManyToMany(() => Application, { onDelete: 'CASCADE' })
+  @ManyToMany(() => Application, (app) => app.users, { onDelete: 'CASCADE' })
   @JoinTable({
     name: USER_APPLICATION_TABLE_NAME,
     joinColumn: {
