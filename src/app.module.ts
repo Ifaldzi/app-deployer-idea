@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { ApplicationModule } from './applications/application.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ApplicationModule } from './applications/application.module';
     UserModule,
     AuthModule,
     ApplicationModule,
+    S3Module,
   ],
 })
 export class AppModule {}

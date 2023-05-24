@@ -14,4 +14,11 @@ export default {
     secret: process.env.JWT_SECRET,
     accessTokenExpiresInMinute: `${process.env.ACCESS_TOKEN_EXPIRES}m`,
   },
+  s3: {
+    bucket: process.env.S3_BUCKET,
+    host: process.env.S3_HOST,
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    region: process.env.REGION || 'us-east-1',
+  },
 };
