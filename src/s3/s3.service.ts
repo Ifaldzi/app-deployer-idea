@@ -17,22 +17,25 @@ export class S3Service {
   });
 
   async uploadFile(
-    file: Buffer,
-    fileName: string,
+    file: Express.Multer.File,
+    isPublic = false,
   ): Promise<AWS.S3.ManagedUpload.SendData> {
     try {
+      const fileName = file.originalname;
       const splittedName = fileName.split('.');
       const fileExtension = splittedName.pop();
       const fileKey = `${splittedName
         .join()
         .replace(' ', '_')}_${Date.now()}.${fileExtension}`;
-      console.log(fileKey);
+      console.log(isPublic);
+      console.log(isPublic ? `public/${fileKey}` : fileKey);
 
       const response = await this.s3
         .upload({
           Bucket: s3Config.bucket,
-          Key: fileKey,
-          Body: file,
+          Key: isPublic ? `public/${fileKey}` : fileKey,
+          Body: file.buffer,
+          ContentType: file.mimetype,
         })
         .promise();
 
