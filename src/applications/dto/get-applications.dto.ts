@@ -8,10 +8,10 @@ export class GetApplicationsDto {
   name: string;
 
   @AutoMap()
-  logo?: string;
+  logo: string | null;
 
   @AutoMap()
-  description?: string;
+  description: string | null;
 
-  createdAt: Date;
+  createdAt?: Date;
 }

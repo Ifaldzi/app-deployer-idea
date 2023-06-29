@@ -6,6 +6,10 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 import { UserService } from 'src/users/user.service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
+import { PaginationQueryDto } from 'src/common/dto/pagination/paginaton-query.dto';
+import { PaginationDto } from 'src/common/dto/pagination/Pagination.dto';
+import { PaginationMetaDto } from 'src/common/dto/pagination/pagination-meta.dto';
+import { GetApplicationsDto } from './dto/get-applications.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -35,8 +39,11 @@ export class ApplicationService {
     }
   }
 
-  async getApplicationsByUser(userId: string): Promise<Application[]> {
-    const apps = this.applicationRepo.find({
+  async getApplicationsByUser(
+    userId: string,
+    paginationQuery: PaginationQueryDto,
+  ): Promise<PaginationDto<GetApplicationsDto>> {
+    const [apps, itemCount] = await this.applicationRepo.findAndCount({
       select: {
         id: true,
         name: true,
@@ -51,7 +58,13 @@ export class ApplicationService {
           id: userId,
         },
       },
+      take: paginationQuery.limit,
+      skip: paginationQuery.offset,
     });
-    return apps;
+
+    return new PaginationDto(
+      this.mapper.mapArray(apps, Application, GetApplicationsDto),
+      new PaginationMetaDto(paginationQuery, itemCount),
+    );
   }
 }

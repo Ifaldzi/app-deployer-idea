@@ -16,7 +16,7 @@ async function bootstrap() {
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, swaggerDoc);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new TypeormExceptionFilter(httpAdapter));
