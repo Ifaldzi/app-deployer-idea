@@ -1,7 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { Persistable } from 'src/common/entities/persistable.entity';
-import { User } from 'src/users/user.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Versioning } from 'src/versionings/entities/versioning.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserApplication } from './user-application.entity';
 
 @Entity({ name: 'applications' })
 export class Application {
@@ -23,6 +24,13 @@ export class Application {
   @Column(() => Persistable, { prefix: false })
   persistable: Persistable;
 
-  @ManyToMany(() => User, (user) => user.applications)
-  users: User[];
+  @OneToMany(
+    () => UserApplication,
+    (userApplication) => userApplication.application,
+    { cascade: true },
+  )
+  userApplications: UserApplication[];
+
+  @OneToMany(() => Versioning, (versioning) => versioning.application)
+  versionings: Versioning[];
 }

@@ -10,6 +10,7 @@ import { PaginationQueryDto } from 'src/common/dto/pagination/paginaton-query.dt
 import { PaginationDto } from 'src/common/dto/pagination/Pagination.dto';
 import { PaginationMetaDto } from 'src/common/dto/pagination/pagination-meta.dto';
 import { GetApplicationsDto } from './dto/get-applications.dto';
+import { UserApplication } from './entities/user-application.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -30,7 +31,9 @@ export class ApplicationService {
     }
 
     const newApp = this.mapper.map(data, CreateApplicationDto, Application);
-    newApp.users = [authUser];
+    const userApplication = new UserApplication();
+    userApplication.user = authUser;
+    newApp.userApplications = [userApplication];
     console.log(newApp);
     try {
       await this.applicationRepo.save(newApp);
@@ -54,8 +57,8 @@ export class ApplicationService {
         },
       },
       where: {
-        users: {
-          id: userId,
+        userApplications: {
+          userId: userId,
         },
       },
       take: paginationQuery.limit,

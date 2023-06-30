@@ -3,14 +3,12 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AutoMap } from '@automapper/classes';
-import { Application } from 'src/applications/entities/application.entity';
-import { USER_APPLICATION_TABLE_NAME } from 'src/common/constants/entity.constant';
+import { UserApplication } from 'src/applications/entities/user-application.entity';
 
 @Entity()
 export class User {
@@ -36,19 +34,8 @@ export class User {
   @Column(() => Persistable, { prefix: false })
   persistable: Persistable;
 
-  @ManyToMany(() => Application, (app) => app.users, { onDelete: 'CASCADE' })
-  @JoinTable({
-    name: USER_APPLICATION_TABLE_NAME,
-    joinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'application_id',
-      referencedColumnName: 'id',
-    },
-  })
-  applications: Application[];
+  @OneToMany(() => UserApplication, (userApplication) => userApplication.user)
+  userApplications: UserApplication[];
 
   @BeforeInsert()
   async generateHashedPassword(): Promise<void> {
