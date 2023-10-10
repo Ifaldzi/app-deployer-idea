@@ -10,5 +10,6 @@ import { ApplicationProfile } from './application.profile';
   imports: [UserModule, TypeOrmModule.forFeature([Application])],
   providers: [ApplicationService, ApplicationProfile],
   controllers: [ApplicationController],
+  exports: [ApplicationService],
 })
 export class ApplicationModule {}

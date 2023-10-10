@@ -6,6 +6,7 @@ import { UserApplication } from './user-application.entity';
 
 @Entity({ name: 'applications' })
 export class Application {
+  @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

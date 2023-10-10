@@ -70,4 +70,8 @@ export class ApplicationService {
       new PaginationMetaDto(paginationQuery, itemCount),
     );
   }
+
+  async getApplicationOrFail(id: string): Promise<Application> {
+    return await this.applicationRepo.findOneOrFail({ where: { id } });
+  }
 }
