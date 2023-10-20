@@ -5,6 +5,9 @@ export class UploadFileDto {
   @ApiProperty({ type: 'string', format: 'binary', required: true })
   file: Express.Multer.File;
 
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => {
+    console.log('transform ', value);
+    return value === 'true' || value === true;
+  })
   isPublic: boolean;
 }

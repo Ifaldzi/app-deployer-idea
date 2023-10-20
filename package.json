@@ -29,6 +29,7 @@
     "@automapper/core": "^8.7.7",
     "@automapper/nestjs": "^8.7.7",
     "@aws-sdk/client-s3": "^3.338.0",
+    "@aws-sdk/s3-request-presigner": "^3.431.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.3",

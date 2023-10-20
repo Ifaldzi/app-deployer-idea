@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFile,
   UseGuards,
@@ -14,6 +16,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { S3Service } from './s3.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadFileDto } from './dto/upload-file.dto';
+import { UploadFileResponseDto } from './dto/upload-file-response.dto';
+import { GetFileDto } from './dto/get-file.dto';
 
 @ApiTags('Files')
 @ApiBearerAuth()
@@ -29,15 +33,16 @@ export class S3Controller {
   async upload(
     @Body() data: UploadFileDto,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<UploadFileResponseDto> {
     if (!file) throw new BadRequestException('file cannot be empty');
 
     const uploadedFile = await this.s3Service.uploadFile(file, data.isPublic);
 
-    return {
-      location: uploadedFile.Location,
-      key: uploadedFile.Key,
-      eTag: uploadedFile.ETag,
-    };
+    return uploadedFile;
+  }
+
+  @Get('/:key')
+  async GetFile(@Param('key') key: string): Promise<GetFileDto> {
+    return this.s3Service.getFile(key);
   }
 }

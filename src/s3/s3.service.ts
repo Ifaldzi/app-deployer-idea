@@ -1,61 +1,86 @@
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
 import config from 'src/config/config';
+import { UploadFileResponseDto } from './dto/upload-file-response.dto';
+import { GetFileDto } from './dto/get-file.dto';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const { s3: s3Config } = config;
 
 @Injectable()
 export class S3Service {
-  private s3 = new AWS.S3({
+  private readonly s3 = new S3Client({
     credentials: {
       accessKeyId: s3Config.accessKeyId,
       secretAccessKey: s3Config.secretAccessKey,
     },
     endpoint: s3Config.host,
-    s3ForcePathStyle: true,
+    forcePathStyle: true,
     region: s3Config.region,
   });
 
   async uploadFile(
     file: Express.Multer.File,
     isPublic = false,
-  ): Promise<AWS.S3.ManagedUpload.SendData> {
+  ): Promise<UploadFileResponseDto> {
     try {
       const fileName = file.originalname;
       const splittedName = fileName.split('.');
       const fileExtension = splittedName.pop();
-      const fileKey = `${splittedName
+      let fileKey = `${splittedName
         .join()
         .replace(' ', '_')}_${Date.now()}.${fileExtension}`;
-      console.log(isPublic);
-      console.log(isPublic ? `public/${fileKey}` : fileKey);
 
-      const response = await this.s3
-        .upload({
+      if (isPublic) fileKey = `public/${fileKey}`;
+
+      const response = await this.s3.send(
+        new PutObjectCommand({
           Bucket: s3Config.bucket,
-          Key: isPublic ? `public/${fileKey}` : fileKey,
+          Key: fileKey,
           Body: file.buffer,
           ContentType: file.mimetype,
-        })
-        .promise();
+        }),
+      );
 
       console.log(response);
-      return response;
+      return {
+        key: fileKey,
+        eTag: response.ETag,
+        location: `${s3Config.host}/${s3Config.bucket}/${fileKey}`,
+      } as UploadFileResponseDto;
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
 
-  async getFileUrl(key: string) {
-    try {
-      const response = await this.s3.getSignedUrlPromise('getObject', {
-        Bucket: s3Config.bucket,
-        Key: key,
-        Expires: 60 * 60 * 1,
-      });
+  async getFile(key: string): Promise<GetFileDto> {
+    const signedUrl = await this.getFileUrl(key, 30);
 
-      return response;
+    const fileName = key.split('/').pop();
+
+    return {
+      key,
+      fileName,
+      url: signedUrl,
+    } as GetFileDto;
+  }
+
+  async getFileUrl(key: string, expires = 60) {
+    try {
+      const url = await getSignedUrl(
+        this.s3,
+        new GetObjectCommand({
+          Bucket: s3Config.bucket,
+          Key: key,
+        }),
+        { expiresIn: 60 * expires },
+      );
+      return url;
     } catch (error) {
       console.log(error);
       throw error;
