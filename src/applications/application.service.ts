@@ -11,6 +11,7 @@ import { PaginationDto } from 'src/common/dto/pagination/Pagination.dto';
 import { PaginationMetaDto } from 'src/common/dto/pagination/pagination-meta.dto';
 import { GetApplicationsDto } from './dto/get-applications.dto';
 import { UserApplication } from './entities/user-application.entity';
+import { GetApplicationDetailDto } from './dto/get-application-detail.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -73,5 +74,40 @@ export class ApplicationService {
 
   async getApplicationOrFail(id: string): Promise<Application> {
     return await this.applicationRepo.findOneOrFail({ where: { id } });
+  }
+
+  async getApplicationById(id: string): Promise<GetApplicationDetailDto> {
+    const application = await this.applicationRepo.findOne({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+        description: true,
+        persistable: {
+          createdAt: true,
+        },
+        versionings: {
+          id: true,
+          description: true,
+          fileKey: true,
+          version: true,
+          persistable: {
+            createdAt: true,
+          },
+        },
+      },
+      relations: {
+        versionings: true,
+      },
+    });
+
+    const applicationDetailDto = this.mapper.map(
+      application,
+      Application,
+      GetApplicationDetailDto,
+    );
+
+    return applicationDetailDto;
   }
 }

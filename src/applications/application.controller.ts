@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -14,6 +15,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetApplicationsDto } from './dto/get-applications.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination/paginaton-query.dto';
 import { PaginationDto } from 'src/common/dto/pagination/Pagination.dto';
+import { GetApplicationDetailDto } from './dto/get-application-detail.dto';
 
 @ApiTags('Applications')
 @ApiBearerAuth()
@@ -36,5 +38,12 @@ export class ApplicationController {
       req.user.id,
       paginationQueryDto,
     );
+  }
+
+  @Get('/:id')
+  async getApplicationDetail(
+    @Param('id') applicationId: string,
+  ): Promise<GetApplicationDetailDto> {
+    return this.applicationService.getApplicationById(applicationId);
   }
 }
